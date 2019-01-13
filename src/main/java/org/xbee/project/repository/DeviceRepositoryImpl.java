@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
+@Transactional(readOnly = true)
 public class DeviceRepositoryImpl implements DeviceRepository {
 
     @PersistenceContext
@@ -20,13 +21,13 @@ public class DeviceRepositoryImpl implements DeviceRepository {
     }
 
     @Override
-    public MyRemoteXbeeDevice get(int id) {
+    public MyRemoteXbeeDevice get(Integer id) {
         return em.find(MyRemoteXbeeDevice.class, id);
     }
 
     @Override
     public MyRemoteXbeeDevice get(String adr64bit) {
-        return em.createNamedQuery(MyRemoteXbeeDevice.GET, MyRemoteXbeeDevice.class).getSingleResult();
+        return em.createNamedQuery(MyRemoteXbeeDevice.GET, MyRemoteXbeeDevice.class).setParameter("xBee64BitAddress", adr64bit).getSingleResult();
     }
 
     @Override
@@ -40,7 +41,8 @@ public class DeviceRepositoryImpl implements DeviceRepository {
     }
 
     @Override
-    public boolean delete(int id) {
+    @Transactional
+    public boolean delete(Integer id) {
         return em.createNamedQuery(MyRemoteXbeeDevice.DELETE).setParameter("id", id).executeUpdate() != 0;
     }
 }

@@ -8,13 +8,13 @@ public interface DeviceRepository {
 
     List<MyRemoteXbeeDevice> getAll();
 
-    MyRemoteXbeeDevice get(int id);
+    MyRemoteXbeeDevice get(Integer id);
 
     MyRemoteXbeeDevice get(String adr64bit);
 
     MyRemoteXbeeDevice save(MyRemoteXbeeDevice device);
 
-    boolean delete(int id);
+    boolean delete(Integer id);
 
 
 }

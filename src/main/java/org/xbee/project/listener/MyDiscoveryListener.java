@@ -9,10 +9,8 @@ import org.springframework.stereotype.Component;
 import org.xbee.project.model.MyRemoteXbeeDevice;
 import org.xbee.project.repository.DeviceRepository;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import static org.xbee.project.controller.InputOutputController.*;
 
 @Component
 public class MyDiscoveryListener implements IDiscoveryListener {
@@ -20,7 +18,9 @@ public class MyDiscoveryListener implements IDiscoveryListener {
     @Autowired
     private DeviceRepository repository;
 
-    public static List<RemoteXBeeDevice> devices = new ArrayList<>();
+    public List<RemoteXBeeDevice> devices = new ArrayList<>();
+
+    private List<MyRemoteXbeeDevice> myDevices = new ArrayList<>();
 
     @Override
     public void deviceDiscovered(RemoteXBeeDevice discoveredDevice) {
@@ -35,32 +35,28 @@ public class MyDiscoveryListener implements IDiscoveryListener {
     @Override
     public void discoveryFinished(String error) {
         if (error == null) {
-                devices.forEach(d -> repository.save(new MyRemoteXbeeDevice(d.getNodeID(), d.get64BitAddress().toString(), d.get16BitAddress().toString(), "role")));
+                devices.forEach(d -> {
+                    try {
+                        String firmwareVersion = HexUtils.byteArrayToHexString(d.getParameter("VR"));
+                        MyRemoteXbeeDevice device = repository.save(new MyRemoteXbeeDevice(d.getNodeID(), d.get64BitAddress().toString(), d.get16BitAddress().toString(), firmwareVersion));
+                        myDevices.add(device);
+                    } catch (XBeeException e) {
+                        e.printStackTrace();
+                    }
+                });
                 System.out.println(">> Discovery process finished successfully.");
         }
         else
             System.out.println(">> Discovery process finished due to the following error: " + error);
     }
 
-    public static RemoteXBeeDevice getDevice(String XBee64BitAddress, String XBee16BitAddress){
+    public RemoteXBeeDevice getDevice(String XBee64BitAddress, String XBee16BitAddress){
         return devices.stream().filter(device -> XBee64BitAddress.equals(device.get64BitAddress().toString())
                 & XBee16BitAddress.equals(device.get16BitAddress().toString())).findAny().orElse(null);
     }
 
-
-    public void getMaxTime() throws XBeeException, InterruptedException {
-        int max = 0;
-        for (RemoteXBeeDevice d: MyDiscoveryListener.devices) {
-            int sleepPeriod = Integer.parseInt(new BigInteger(HexUtils.byteArrayToHexString(d.getParameter("SP")), 16).toString(10)) * 10;
-            System.out.println(d.getNodeID() + " sleep period: " + sleepPeriod);
-            int timeBeforeSleep = Integer.parseInt(new BigInteger(HexUtils.byteArrayToHexString(d.getParameter("ST")), 16).toString(10));
-            System.out.println(d.getNodeID() + " time before sleep: " + timeBeforeSleep);
-            int sum = sleepPeriod + timeBeforeSleep;
-            if (sum > max)
-                max = sum;
-        }
-
-        System.out.println("Max: " + max);
-        maxTime = max;
+    public List<MyRemoteXbeeDevice> getDevices(){
+        return myDevices;
     }
+
 }

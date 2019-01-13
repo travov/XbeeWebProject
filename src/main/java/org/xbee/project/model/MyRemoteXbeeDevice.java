@@ -1,13 +1,10 @@
 package org.xbee.project.model;
-
-import com.sun.istack.internal.NotNull;
-
 import javax.persistence.*;
 
 @NamedQueries({
         @NamedQuery(name = MyRemoteXbeeDevice.GET_ALL, query = "SELECT d FROM MyRemoteXbeeDevice d"),
         @NamedQuery(name = MyRemoteXbeeDevice.DELETE, query = "DELETE FROM MyRemoteXbeeDevice d WHERE d.id=:id"),
-        @NamedQuery(name = MyRemoteXbeeDevice.GET, query = "SELECT d FROM MyRemoteXbeeDevice d WHERE d.xBee16BitAddress=:xBee16BitAddress")
+        @NamedQuery(name = MyRemoteXbeeDevice.GET, query = "SELECT d FROM MyRemoteXbeeDevice d WHERE d.xBee64BitAddress=:xBee64BitAddress")
 })
 @Entity
 @Table(name = "devices")
@@ -22,11 +19,9 @@ public class MyRemoteXbeeDevice extends AbstractEntity {
     private String nodeId;
 
     @Column(name = "adr64bit")
-    @NotNull
     private String xBee64BitAddress;
 
     @Column(name = "adr16bit")
-    @NotNull
     private String xBee16BitAddress;
 
     @Column(name = "role")
@@ -41,19 +36,16 @@ public class MyRemoteXbeeDevice extends AbstractEntity {
         this.xBee16BitAddress = xBee16BitAddress;
     }
 
-    public MyRemoteXbeeDevice(String nodeId, String xBee64BitAddress, String xBee16BitAddress, String role) {
+    public MyRemoteXbeeDevice(String nodeId, String xBee64BitAddress, String xBee16BitAddress, String firmwareVersion) {
         this.nodeId = nodeId;
         this.xBee64BitAddress = xBee64BitAddress;
         this.xBee16BitAddress = xBee16BitAddress;
-        this.role = role;
+        setRole(firmwareVersion);
     }
 
-    public MyRemoteXbeeDevice(Integer id, String nodeId, String xBee64BitAddress, String xBee16BitAddress, String role) {
+    public MyRemoteXbeeDevice(Integer id, String nodeId, String xBee64BitAddress, String xBee16BitAddress, String firmwareVersion) {
+        this(nodeId, xBee64BitAddress, xBee16BitAddress, firmwareVersion);
         this.id = id;
-        this.nodeId = nodeId;
-        this.xBee64BitAddress = xBee64BitAddress;
-        this.xBee16BitAddress = xBee16BitAddress;
-        this.role = role;
     }
 
     public String getNodeId() {
@@ -84,7 +76,26 @@ public class MyRemoteXbeeDevice extends AbstractEntity {
         this.xBee16BitAddress = xBee16BitAddress;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRole(String firmwareVersion) {
+        switch (firmwareVersion.substring(0, 2)){
+            case "21":
+                role = "ZigBee Coordinator API";
+                break;
+            case "20":
+                role = "ZigBee Coordinator AT";
+                break;
+            case "29":
+                role = "ZigBee End Device API";
+                break;
+            case "28":
+                role = "ZigBee End Device AT";
+                break;
+            case "23":
+                role = "ZigBee Router API";
+                break;
+            case "22":
+                role = "ZigBee Router AT";
+                break;
+        }
     }
 }

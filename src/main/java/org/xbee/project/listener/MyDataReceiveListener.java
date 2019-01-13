@@ -3,15 +3,12 @@ package org.xbee.project.listener;
 import com.digi.xbee.api.listeners.IPacketReceiveListener;
 import com.digi.xbee.api.packet.XBeePacket;
 import com.digi.xbee.api.utils.HexUtils;
-import org.xbee.project.model.Frame;
 
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MyDataReceiveListener implements IPacketReceiveListener {
 
-    public static Map<Integer, Frame> map = new HashMap<>();
+    /*public static Map<Integer, Frame> map = new HashMap<>();*/
 
     public void packetReceived(XBeePacket xBeePacket) {
         byte[] packetData = xBeePacket.getPacketData();
@@ -57,7 +54,7 @@ public class MyDataReceiveListener implements IPacketReceiveListener {
             }
             //"Sound in mV: " + (Integer.parseInt(response.substring(12), 16) * 1200) / 1023);
             System.out.println("listener " + frameId);
-            map.put(Integer.parseInt(frameId), new Frame(type, frameId, longSourceAddress, shortSourceAddress, binaryDigitalMask, binaryAnalogMask, ATcommand, status, response));
+            /*map.put(Integer.parseInt(frameId), new Frame(type, frameId, longSourceAddress, shortSourceAddress, binaryDigitalMask, binaryAnalogMask, ATcommand, status, response));*/
             /*for (Map.Entry<Integer, Frame> pair: map.entrySet()){
                 System.out.println(pair.getKey() + ": " + pair.getValue());
             }*/
