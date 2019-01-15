@@ -81,20 +81,11 @@ public class MyRemoteXbeeDevice extends AbstractEntity {
             case "21":
                 role = "ZigBee Coordinator API";
                 break;
-            case "20":
-                role = "ZigBee Coordinator AT";
-                break;
             case "29":
                 role = "ZigBee End Device API";
                 break;
-            case "28":
-                role = "ZigBee End Device AT";
-                break;
             case "23":
                 role = "ZigBee Router API";
-                break;
-            case "22":
-                role = "ZigBee Router AT";
                 break;
         }
     }

@@ -1,5 +1,5 @@
-DELETE FROM PARAMETERS;
 DELETE FROM LINES;
+DELETE FROM DEVICES;
 
 INSERT INTO lines (name, atCommand, index) VALUES
 ('DIO0/AD0', 'D0', 0),
@@ -23,9 +23,10 @@ INSERT INTO lines (name, atCommand, index) VALUES
 ('DIO18', 'P8', 18),
 ('DIO19', 'P9', 19);
 
-INSERT INTO parameters(name) VALUES
-('SP'),
-('SN'),
-('IR'),
-('IC'),
-('VR');
+
+/*INSERT INTO DEVICES(adr64bit, adr16bit, nodeid, role) VALUES
+('12345678', '4321', 'FirstDevice', 'Coordinator');*/
+
+
+
+

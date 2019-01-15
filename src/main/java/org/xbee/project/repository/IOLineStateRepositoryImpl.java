@@ -3,9 +3,9 @@ package org.xbee.project.repository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.xbee.project.model.IOLineState;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -23,6 +23,16 @@ public class IOLineStateRepositoryImpl implements IOLineStateRepository {
     @Override
     public List<IOLineState> getByDeviceId(Integer deviceId) {
         return em.createNamedQuery(IOLineState.GET_BY_DEVICE_ID, IOLineState.class).setParameter("deviceId", deviceId).getResultList();
+    }
+
+    @Override
+    public List<IOLineState> getByDeviceIdAndTime(Integer deviceId, String atCommand, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        Integer lineId = getLineId(atCommand);
+        return em.createNamedQuery(IOLineState.GET_BY_DEVICE_ID_AND_TIME, IOLineState.class)
+                .setParameter("deviceId", deviceId)
+                .setParameter("linesId", lineId)
+                .setParameter("startDateTime", startDateTime)
+                .setParameter("endDateTime", endDateTime).getResultList();
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.xbee.project.model.MyRemoteXbeeDevice;
 import org.xbee.project.repository.DeviceRepository;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,6 @@ public class MyDiscoveryListener implements IDiscoveryListener {
     private DeviceRepository repository;
 
     public List<RemoteXBeeDevice> devices = new ArrayList<>();
-
-    private List<MyRemoteXbeeDevice> myDevices = new ArrayList<>();
 
     @Override
     public void deviceDiscovered(RemoteXBeeDevice discoveredDevice) {
@@ -35,11 +34,10 @@ public class MyDiscoveryListener implements IDiscoveryListener {
     @Override
     public void discoveryFinished(String error) {
         if (error == null) {
-                devices.forEach(d -> {
+                devices.forEach(d ->{
                     try {
                         String firmwareVersion = HexUtils.byteArrayToHexString(d.getParameter("VR"));
-                        MyRemoteXbeeDevice device = repository.save(new MyRemoteXbeeDevice(d.getNodeID(), d.get64BitAddress().toString(), d.get16BitAddress().toString(), firmwareVersion));
-                        myDevices.add(device);
+                        repository.save(new MyRemoteXbeeDevice(d.getNodeID(), d.get64BitAddress().toString(), d.get16BitAddress().toString(), firmwareVersion));
                     } catch (XBeeException e) {
                         e.printStackTrace();
                     }
@@ -56,7 +54,20 @@ public class MyDiscoveryListener implements IDiscoveryListener {
     }
 
     public List<MyRemoteXbeeDevice> getDevices(){
-        return myDevices;
+       return repository.getAll();
+    }
+
+    public void updateDevice(RemoteXBeeDevice remote){
+        try {
+            MyRemoteXbeeDevice device = repository.get(remote.get64BitAddress().toString());
+            String nodeId = new String(remote.getParameter("NI"), StandardCharsets.UTF_8);
+            String firmwareVersion = HexUtils.byteArrayToHexString(remote.getParameter("VR"));
+            device.setNodeId(nodeId);
+            device.setRole(firmwareVersion);
+            repository.save(device);
+        } catch (XBeeException e) {
+            e.printStackTrace();
+        }
     }
 
 }

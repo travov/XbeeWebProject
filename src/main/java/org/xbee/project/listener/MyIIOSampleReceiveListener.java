@@ -11,7 +11,6 @@ import org.xbee.project.model.IOLineState;
 import org.xbee.project.model.MyRemoteXbeeDevice;
 import org.xbee.project.repository.DeviceRepository;
 import org.xbee.project.repository.IOLineStateRepository;
-
 import java.time.LocalDateTime;
 import java.util.Map;
 

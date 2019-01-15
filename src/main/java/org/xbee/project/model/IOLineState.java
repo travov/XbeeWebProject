@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 
 @NamedQueries({
         @NamedQuery(name = IOLineState.DELETE, query = "DELETE FROM IOLineState s WHERE s.id=:id"),
-        @NamedQuery(name = IOLineState.GET_BY_DEVICE_ID, query = "SELECT s FROM IOLineState s WHERE s.deviceId=:deviceId")
+        @NamedQuery(name = IOLineState.GET_BY_DEVICE_ID, query = "SELECT s FROM IOLineState s WHERE s.deviceId=:deviceId"),
+        @NamedQuery(name = IOLineState.GET_BY_DEVICE_ID_AND_TIME, query = "SELECT s FROM IOLineState s WHERE s.deviceId=:deviceId AND s.linesId=:linesId AND s.dateTime BETWEEN :startDateTime AND :endDateTime ORDER BY s.dateTime DESC")
 })
 @Entity
 @Table(name = "line_states")
@@ -16,6 +17,7 @@ public class IOLineState extends AbstractEntity {
 
     public static final String GET_BY_DEVICE_ID = "IOLineState.getByDeviceId";
     public static final String DELETE = "IOLineState.delete";
+    public static final String GET_BY_DEVICE_ID_AND_TIME = "IOLineState.getByDeviceIdAndTime";
 
     @Column(name = "devices_id")
     private Integer deviceId;
@@ -29,8 +31,8 @@ public class IOLineState extends AbstractEntity {
     @Column(name = "value")
     private String value;
 
-    @Column(name = "timestamp")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @Column(name = "dateTime")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime dateTime;
 
     public IOLineState(){
