@@ -16,5 +16,7 @@ public interface DeviceRepository {
 
     boolean delete(Integer id);
 
+    boolean deleteAll();
+
 
 }

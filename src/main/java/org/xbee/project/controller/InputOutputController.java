@@ -58,6 +58,7 @@ public class InputOutputController {
         //clear list if not null
         if (!discoveryListener.devices.isEmpty()) {
             discoveryListener.devices.clear();
+            discoveryListener.deleteAllDevices();
         }
         network.setDiscoveryTimeout(timeout);
         network.startDiscoveryProcess();

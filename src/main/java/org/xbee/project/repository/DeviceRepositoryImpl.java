@@ -45,4 +45,10 @@ public class DeviceRepositoryImpl implements DeviceRepository {
     public boolean delete(Integer id) {
         return em.createNamedQuery(MyRemoteXbeeDevice.DELETE).setParameter("id", id).executeUpdate() != 0;
     }
+
+    @Override
+    @Transactional
+    public boolean deleteAll() {
+        return em.createNamedQuery(MyRemoteXbeeDevice.DELETE_ALL).executeUpdate() != 0;
+    }
 }

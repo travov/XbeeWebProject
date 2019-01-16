@@ -4,7 +4,9 @@ import javax.persistence.*;
 @NamedQueries({
         @NamedQuery(name = MyRemoteXbeeDevice.GET_ALL, query = "SELECT d FROM MyRemoteXbeeDevice d"),
         @NamedQuery(name = MyRemoteXbeeDevice.DELETE, query = "DELETE FROM MyRemoteXbeeDevice d WHERE d.id=:id"),
-        @NamedQuery(name = MyRemoteXbeeDevice.GET, query = "SELECT d FROM MyRemoteXbeeDevice d WHERE d.xBee64BitAddress=:xBee64BitAddress")
+        @NamedQuery(name = MyRemoteXbeeDevice.GET, query = "SELECT d FROM MyRemoteXbeeDevice d WHERE d.xBee64BitAddress=:xBee64BitAddress"),
+        @NamedQuery(name = MyRemoteXbeeDevice.DELETE_ALL, query = "DELETE FROM MyRemoteXbeeDevice d")
+
 })
 @Entity
 @Table(name = "devices")
@@ -13,6 +15,7 @@ public class MyRemoteXbeeDevice extends AbstractEntity {
     public static final String GET_ALL = "MyRemoteXbeeDevice.getAll";
     public static final String DELETE = "MyRemoteXbeeDevice.delete";
     public static final String GET = "MyRemoteXbeeDevice.get";
+    public static final String DELETE_ALL = "MyRemoteXbeeDevice.deleteAll";
 
 
     @Column(name = "nodeId")

@@ -70,4 +70,8 @@ public class MyDiscoveryListener implements IDiscoveryListener {
         }
     }
 
+    public boolean deleteAllDevices(){
+       return repository.deleteAll();
+    }
+
 }

@@ -4,9 +4,11 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+    <import resource="spring-db.xml"/>
+
     <bean id="device" class="com.digi.xbee.api.XBeeDevice">
-        <constructor-arg index="0" type="java.lang.String" value="COM3"/>
-        <constructor-arg index="1" type="int" value="9600"/>
+        <constructor-arg index="0" type="java.lang.String" value="${com.port}"/>
+        <constructor-arg index="1" type="int" value="${baud.rate}"/>
     </bean>
     <!--<bean class="org.xbee.project.web.JacksonObjectMapper" id="objectMapper" factory-method="getMapper"/>-->
 
@@ -17,7 +19,6 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
 
-    <import resource="spring-db.xml"/>
 
     <context:component-scan base-package="org.xbee.project.controller"/>
 
