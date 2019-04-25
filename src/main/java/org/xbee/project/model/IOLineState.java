@@ -1,6 +1,5 @@
 package org.xbee.project.model;
 
-import com.digi.xbee.api.io.IOLine;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -23,7 +22,7 @@ public class IOLineState extends AbstractEntity {
     private Integer deviceId;
 
     @Transient
-    private IOLine line;
+    private String line;
 
     @Column(name = "lines_id")
     private Integer linesId;
@@ -58,11 +57,11 @@ public class IOLineState extends AbstractEntity {
         this.deviceId = deviceId;
     }
 
-    public IOLine getLine() {
+    public String getLine() {
         return line;
     }
 
-    public void setLine(IOLine line) {
+    public void setLine(String line) {
         this.line = line;
     }
 

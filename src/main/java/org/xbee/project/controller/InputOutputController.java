@@ -3,6 +3,7 @@ package org.xbee.project.controller;
 import com.digi.xbee.api.RemoteXBeeDevice;
 import com.digi.xbee.api.XBeeDevice;
 import com.digi.xbee.api.XBeeNetwork;
+import com.digi.xbee.api.connection.serial.SerialPortRxTx;
 import com.digi.xbee.api.exceptions.XBeeException;
 import com.digi.xbee.api.io.IOLine;
 import com.digi.xbee.api.listeners.IDiscoveryListener;
@@ -171,7 +172,7 @@ public class InputOutputController {
     }
 
     @PutMapping(value = "/param", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, String>> setParameter(@RequestParam("adr64bit") String XBee64BitAddress, //haven't finished, should be added db
+    public ResponseEntity<Map<String, String>> setParameter(@RequestParam("adr64bit") String XBee64BitAddress,
                                             @RequestParam("adr16bit") String XBee16BitAddress,
                                             @RequestParam("at") String param,
                                             @RequestParam("value") String value) throws XBeeException {

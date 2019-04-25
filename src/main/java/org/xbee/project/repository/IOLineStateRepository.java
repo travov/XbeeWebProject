@@ -17,5 +17,7 @@ public interface IOLineStateRepository {
 
     Integer getLineId(String atCommand);
 
+    String getLineName(Integer id);
+
     boolean delete(Integer id);
 }

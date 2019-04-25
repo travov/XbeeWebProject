@@ -22,17 +22,25 @@ public class IOLineStateRepositoryImpl implements IOLineStateRepository {
 
     @Override
     public List<IOLineState> getByDeviceId(Integer deviceId) {
-        return em.createNamedQuery(IOLineState.GET_BY_DEVICE_ID, IOLineState.class).setParameter("deviceId", deviceId).getResultList();
+        List<IOLineState> states = em.createNamedQuery(IOLineState.GET_BY_DEVICE_ID, IOLineState.class).setParameter("deviceId", deviceId).getResultList();
+        states.forEach(s ->{
+            String name = getLineName(s.getLinesId());
+            s.setLine(name);
+        });
+        return states;
     }
 
     @Override
     public List<IOLineState> getByDeviceIdAndTime(Integer deviceId, String atCommand, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         Integer lineId = getLineId(atCommand);
-        return em.createNamedQuery(IOLineState.GET_BY_DEVICE_ID_AND_TIME, IOLineState.class)
+        String name = getLineName(lineId);
+        List<IOLineState> states = em.createNamedQuery(IOLineState.GET_BY_DEVICE_ID_AND_TIME, IOLineState.class)
                 .setParameter("deviceId", deviceId)
                 .setParameter("linesId", lineId)
                 .setParameter("startDateTime", startDateTime)
                 .setParameter("endDateTime", endDateTime).getResultList();
+        states.forEach(s -> s.setLine(name));
+        return states;
     }
 
     @Override
@@ -49,6 +57,12 @@ public class IOLineStateRepositoryImpl implements IOLineStateRepository {
     public Integer getLineId(String atCommand) {
         return (Integer) em.createNativeQuery("SELECT id FROM lines WHERE atCommand = :at_command").setParameter("at_command", atCommand).getSingleResult();
     }
+
+    @Override
+    public String getLineName(Integer id) {
+        return (String) em.createNativeQuery("SELECT ATCOMMAND FROM LINES WHERE id = :id").setParameter("id", id).getSingleResult();
+    }
+
 
     @Override
     @Transactional
