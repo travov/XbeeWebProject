@@ -21,6 +21,11 @@ public class DeviceRepositoryImpl implements DeviceRepository {
     }
 
     @Override
+    public List<MyRemoteXbeeDevice> getAllWithActive(String active) {
+        return em.createNamedQuery(MyRemoteXbeeDevice.GET_ALL_ACTIVE, MyRemoteXbeeDevice.class).setParameter("active", active).getResultList();
+    }
+
+    @Override
     public MyRemoteXbeeDevice get(Integer id) {
         return em.find(MyRemoteXbeeDevice.class, id);
     }

@@ -8,6 +8,8 @@ public interface DeviceRepository {
 
     List<MyRemoteXbeeDevice> getAll();
 
+    List<MyRemoteXbeeDevice> getAllWithActive(String active);
+
     MyRemoteXbeeDevice get(Integer id);
 
     MyRemoteXbeeDevice get(String adr64bit);
@@ -17,6 +19,4 @@ public interface DeviceRepository {
     boolean delete(Integer id);
 
     boolean deleteAll();
-
-
 }

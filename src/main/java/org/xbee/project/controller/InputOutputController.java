@@ -3,7 +3,6 @@ package org.xbee.project.controller;
 import com.digi.xbee.api.RemoteXBeeDevice;
 import com.digi.xbee.api.XBeeDevice;
 import com.digi.xbee.api.XBeeNetwork;
-import com.digi.xbee.api.connection.serial.SerialPortRxTx;
 import com.digi.xbee.api.exceptions.XBeeException;
 import com.digi.xbee.api.io.IOLine;
 import com.digi.xbee.api.listeners.IDiscoveryListener;
@@ -19,7 +18,6 @@ import org.xbee.project.listener.MyDiscoveryListener;
 import org.xbee.project.model.IOLineState;
 import org.xbee.project.model.MyRemoteXbeeDevice;
 import org.xbee.project.repository.IOLineStateRepository;
-
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -34,7 +32,7 @@ public class InputOutputController {
 
     private MyDiscoveryListener discoveryListener;
 
-    public static XBeeDevice device;
+    protected static XBeeDevice device;
 
     private IOLineStateRepository stateRepository;
 
@@ -59,7 +57,6 @@ public class InputOutputController {
         //clear list if not null
         if (!discoveryListener.devices.isEmpty()) {
             discoveryListener.devices.clear();
-            discoveryListener.deleteAllDevices();
         }
         network.setDiscoveryTimeout(timeout);
         network.startDiscoveryProcess();
@@ -67,7 +64,7 @@ public class InputOutputController {
             put("method", "startDiscoveryProcess");
             put("status", "ok");
         }});
-}
+    }
 
     @GetMapping(value = "/states", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<IOLineState>> getStates(@RequestParam("deviceId")  Integer deviceId,
@@ -84,9 +81,14 @@ public class InputOutputController {
     }
 
     @GetMapping(value = "/devices", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MyRemoteXbeeDevice>> getDiscoveredDevices(){
+    public ResponseEntity<List<MyRemoteXbeeDevice>> getDiscoveredDevices(@RequestParam(value = "active", required = false) String active){
+        List<MyRemoteXbeeDevice> devices;
+        if (active == null)
+            devices = discoveryListener.getAllDevices();
+        else
+            devices = discoveryListener.getActiveDevices(active);
 
-        return ResponseEntity.status(HttpStatus.OK).body(discoveryListener.getDevices());
+        return ResponseEntity.status(HttpStatus.OK).body(devices);
     }
 
     @PutMapping(value = "/sampling", produces = MediaType.APPLICATION_JSON_VALUE)

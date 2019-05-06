@@ -11,6 +11,7 @@ CREATE TABLE devices
   adr64bit    VARCHAR(16)             NOT NULL,
   adr16bit    VARCHAR(4)              NOT NULL,
   nodeId      VARCHAR(20),
+  active      BOOLEAN DEFAULT TRUE,
   role        VARCHAR(34)
 );
 CREATE UNIQUE INDEX devices_unique_adr64bit_idx ON devices (adr64bit);
