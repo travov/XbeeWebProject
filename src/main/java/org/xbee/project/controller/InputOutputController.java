@@ -81,7 +81,7 @@ public class InputOutputController {
     }
 
     @GetMapping(value = "/devices", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MyRemoteXbeeDevice>> getDiscoveredDevices(@RequestParam(value = "active", required = false) String active){
+    public ResponseEntity<List<MyRemoteXbeeDevice>> getDiscoveredDevices(@RequestParam(value = "active", required = false) Boolean active){
         List<MyRemoteXbeeDevice> devices;
         if (active == null)
             devices = discoveryListener.getAllDevices();
@@ -93,9 +93,8 @@ public class InputOutputController {
 
     @PutMapping(value = "/sampling", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> setSampling(@RequestParam("adr64bit") String XBee64BitAddress,
-                              @RequestParam("adr16bit") String XBee16BitAddress,
                               @RequestParam("rate") String rate) throws XBeeException {
-        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress, XBee16BitAddress);
+        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress);
         device.setIOSamplingRate(Integer.parseInt(rate));
         return ResponseEntity.status(HttpStatus.OK).body(new HashMap<String, String>(){{
             put("adr64bit", XBee64BitAddress);
@@ -106,11 +105,10 @@ public class InputOutputController {
 
     @PutMapping(value = "/changeDetection", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> setChangeDetection(@RequestParam("adr64bit") String XBee64BitAddress,
-                                   @RequestParam("adr16bit") String XBee16BitAddress,
                                    @RequestBody Set<Integer> lines) throws XBeeException {
         Set<IOLine> set = new HashSet<>();
         lines.forEach(line -> set.add(IOLine.getDIO(line)));
-        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress, XBee16BitAddress);
+        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress);
         device.setDIOChangeDetection(set);
         return ResponseEntity.status(HttpStatus.OK).body(new HashMap<String, String>(){{
             put("adr64bit", XBee64BitAddress);
@@ -120,9 +118,8 @@ public class InputOutputController {
     }
 
     @PutMapping(value = "/wr", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, String>> write(@RequestParam("adr64bit") String XBee64BitAddress,
-                      @RequestParam("adr16bit") String XBee16BitAddress) throws XBeeException {
-        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress, XBee16BitAddress);
+    public ResponseEntity<Map<String, String>> write(@RequestParam("adr64bit") String XBee64BitAddress) throws XBeeException {
+        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress);
         device.writeChanges();
         return ResponseEntity.status(HttpStatus.OK).body(new HashMap<String, String>(){{
             put("adr64bit", XBee64BitAddress);
@@ -133,9 +130,8 @@ public class InputOutputController {
 
     @GetMapping(value = "/dio", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> getDioValue(@RequestParam("adr64bit") String XBee64BitAddress,
-                                           @RequestParam("adr16bit") String XBee16BitAddress,
                                            @RequestParam("index") int index) throws XBeeException {
-        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress, XBee16BitAddress);
+        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress);
         IOLine line = IOLine.getDIO(index);
         String value = device.getDIOValue(line).getName();
         return ResponseEntity.status(HttpStatus.OK).body(new HashMap<String, String>(){{
@@ -147,9 +143,8 @@ public class InputOutputController {
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> setNodeIdentifier(@RequestParam("adr64bit") String XBee64BitAddress,
-                                    @RequestParam("adr16bit") String XBee16BitAddress,
                                     @RequestParam("newId") String id) throws XBeeException {
-        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress, XBee16BitAddress);
+        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress);
         device.setNodeID(id);
         discoveryListener.updateDevice(device);
         return ResponseEntity.status(HttpStatus.OK).body(new HashMap<String, String>(){{
@@ -161,10 +156,9 @@ public class InputOutputController {
 
     @GetMapping(value = "/param", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> getParameter(@RequestParam("adr64bit") String XBee64BitAddress,
-                                            @RequestParam("adr16bit") String XBee16BitAddress,
                                             @RequestParam("at") String param) throws XBeeException {
 
-        byte[] parameter = discoveryListener.getDevice(XBee64BitAddress, XBee16BitAddress).getParameter(param);
+        byte[] parameter = discoveryListener.getDevice(XBee64BitAddress).getParameter(param);
         String value = param.equals("NI") ? new String(parameter, StandardCharsets.UTF_8) : HexUtils.byteArrayToHexString(parameter);
         return ResponseEntity.status(HttpStatus.OK).body(new HashMap<String, String>(){{
             put("adr64bit", XBee64BitAddress);
@@ -175,11 +169,10 @@ public class InputOutputController {
 
     @PutMapping(value = "/param", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> setParameter(@RequestParam("adr64bit") String XBee64BitAddress,
-                                            @RequestParam("adr16bit") String XBee16BitAddress,
                                             @RequestParam("at") String param,
                                             @RequestParam("value") String value) throws XBeeException {
         byte[] bytes = param.equals("NI") ? value.getBytes() : HexUtils.hexStringToByteArray(value);
-        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress, XBee16BitAddress);
+        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress);
         device.setParameter(param, bytes);
         return ResponseEntity.status(HttpStatus.OK).body(new HashMap<String, String>(){{
             put("adr64bit", XBee64BitAddress);

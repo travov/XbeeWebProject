@@ -121,13 +121,12 @@ public class MyRemoteXbeeDevice extends AbstractEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MyRemoteXbeeDevice device = (MyRemoteXbeeDevice) o;
-        return xBee64BitAddress.equals(device.xBee64BitAddress) &&
-                xBee16BitAddress.equals(device.xBee16BitAddress);
+        return xBee64BitAddress.equals(device.xBee64BitAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(xBee64BitAddress, xBee16BitAddress);
+        return Objects.hash(xBee64BitAddress);
     }
 
     @Override

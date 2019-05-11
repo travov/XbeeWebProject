@@ -3,7 +3,8 @@ package org.xbee.project.model;
 import javax.persistence.*;
 
 @MappedSuperclass
-public abstract class AbstractEntity {
+@Access(AccessType.FIELD)
+public abstract class AbstractEntity implements HasId {
 
     public static final int START_SEQ = 1000;
 
@@ -19,10 +20,7 @@ public abstract class AbstractEntity {
         this.id = id;
     }
 
-    public boolean isNew(){
-        return getId() == null;
-    }
-
+    @Override
     public Integer getId() {
         return id;
     }

@@ -142,16 +142,15 @@ public class MyDiscoveryListener implements IDiscoveryListener {
             System.out.println(">> Discovery process finished due to the following error: " + error);
     }
 
-    public RemoteXBeeDevice getDevice(String XBee64BitAddress, String XBee16BitAddress){
-        return devices.stream().filter(device -> XBee64BitAddress.equals(device.get64BitAddress().toString())
-                & XBee16BitAddress.equals(device.get16BitAddress().toString())).findAny().orElse(null);
+    public RemoteXBeeDevice getDevice(String XBee64BitAddress){
+        return devices.stream().filter(device -> XBee64BitAddress.equals(device.get64BitAddress().toString())).findAny().orElse(null);
     }
 
     public List<MyRemoteXbeeDevice> getAllDevices(){
        return repository.getAll();
     }
 
-    public List<MyRemoteXbeeDevice> getActiveDevices(String active){
+    public List<MyRemoteXbeeDevice> getActiveDevices(Boolean active){
         return repository.getAllWithActive(active);
     }
 

@@ -8,7 +8,7 @@ public interface DeviceRepository {
 
     List<MyRemoteXbeeDevice> getAll();
 
-    List<MyRemoteXbeeDevice> getAllWithActive(String active);
+    List<MyRemoteXbeeDevice> getAllWithActive(Boolean active);
 
     MyRemoteXbeeDevice get(Integer id);
 
