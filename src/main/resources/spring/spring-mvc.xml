@@ -10,15 +10,16 @@
         <constructor-arg index="0" type="java.lang.String" value="${com.port}"/>
         <constructor-arg index="1" type="int" value="${baud.rate}"/>
     </bean>
-    <!--<bean class="org.xbee.project.web.JacksonObjectMapper" id="objectMapper" factory-method="getMapper"/>-->
+    <bean class="org.xbee.project.web.JacksonObjectMapper" id="objectMapper" factory-method="getMapper"/>
 
     <mvc:annotation-driven>
         <mvc:message-converters>
-            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper" ref="objectMapper"/>
+            </bean>
             <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
         </mvc:message-converters>
     </mvc:annotation-driven>
-
 
     <context:component-scan base-package="org.xbee.project.controller"/>
 
