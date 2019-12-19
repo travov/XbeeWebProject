@@ -99,6 +99,7 @@ Enables to set up any AT parameter to remote device
 Enables to get all line states which were saved to database
 
 ``` curl -s GET "http://localhost:8080/XbeeWebNew/io/states?deviceId=1020" ```
+
 ``` curl -s GET "http://localhost:8080/XbeeWebNew/io/states?deviceId=1020&at=D0&startDateTime=2019-12-19T22:15&endDateTime=2019-12-19T22:30" ```
 
 
