@@ -54,6 +54,7 @@ You can manage your ZigBee Network using following queries
 ``` curl -s http://localhost:8080/XbeeWebNew/io/devices?active=true ```
 
 ``` curl -s http://localhost:8080/XbeeWebProject/io/devices?active=false ```
++param **active** - you can specify which devices you want to get (active or not active) by setting it true or false
 
 ### Setting sampling rate
 ``` curl -s -X PUT "http://localhost:8080/XbeeWebProject/io/sampling?adr64bit=0013A20040EC3B01&rate=2000" ```
