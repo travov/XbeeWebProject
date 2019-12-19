@@ -102,7 +102,7 @@ public class InputOutputController {
         lines.forEach(line -> set.add(IOLine.getDIO(line)));
         RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress);
         device.setDIOChangeDetection(set);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("setSampling"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("setChangeDetection"));
     }
 
     @PutMapping(value = "/wr", produces = MediaType.APPLICATION_JSON_VALUE)
