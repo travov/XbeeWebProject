@@ -1,6 +1,6 @@
 # XbeeWebProject
 
-REST API implementation which enables to manage remotely Zigbee Network based on Xbee devices.
+REST API implementation which enables to manage remotely **Zigbee Network** based on [Xbee devices](https://www.digi.com/support/productdetail?pid=3430).
 
 Project uses following technologies and libraries:
 + Spring Framework
@@ -85,7 +85,7 @@ Warning - pin should be set up as digital, not analog
 + param **newId** - new name of remote device which you want to set up
 
 ### Getting parameter
-Enables to get any AT parameter from remote device. Full list of AT parameters is represented in device manual.
+Enables to get any AT parameter from remote device. Full list of AT parameters is represented in [device manual](https://www.digi.com/resources/documentation/digidocs/PDFs/90000976.pdf).
 
 ``` curl -s GET "http://localhost:8080/XbeeWebProject/io/param?adr64bit=0013A20040EC3B01&at=NI" ```
 + param **adr64bit** - unique 64 bit address of remote Xbee device
