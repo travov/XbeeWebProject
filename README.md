@@ -8,7 +8,7 @@ Project uses following technologies and libraries:
 + HSQLDB
 + Xbee Java Library
 
-## How to use:
+## Install
 Before you launch the app you must:
 1. Provide **app.properties** file, where you should specify *com.port*(e.g. **COM3**), *baud.rate* (e.g. **9600**) and also *database.url* (e.g. **jdbc:hsqldb:file:C:/path/to/created/hsql/folder**). Example: 
 ```
@@ -23,7 +23,8 @@ database.url=jdbc:hsqldb:file:C:/projects/db/hsql
 
 Also, in order to provide **log file** you should define [**user environment variable**](https://helpdeskgeek.com/how-to/create-custom-environment-variables-in-windows/) named **XBEE_ROOT** where you specify your project directory or any other.
 
-Then you should create .war file from this project, you can do this either through Tomcat settings using IDEA or using cmd 
+## Run the app
+You should create .war file from this project, you can do this either through Tomcat settings using IDEA or using cmd 
 > cd /to/your/folder/location 
 
 > jar -cvf my_web_app.war * 
@@ -41,7 +42,7 @@ or just launch it in your IDEA
 ## REST API
 To reach your remote web application you should use url type of http://your-server-ip:8080/XbeeWebProject/io/ ... 
 
-where **XbeeWebProject** is just a name of your deployed .war file
+where **XbeeWebProject** is just a name of your deployed .war file and **8080** is default tomcat http port [you can change it](https://stackoverflow.com/questions/18415578/how-to-change-tomcat-port-number) 
 You can manage your ZigBee Network using following queries
 
 ### Discovering new devices in network
