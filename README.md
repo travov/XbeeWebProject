@@ -26,7 +26,7 @@ Also, in order to provide **log file** you should define [**user environment var
 You should create .war file from this project, you can do this either through Tomcat settings using IDEA or using cmd 
 > cd /to/your/folder/location 
 
-> jar -cvf my_web_app.war * 
+> mvn package 
 
 and place this .war file in **apache-tomcat-9.0.4\webapps** directory
 
