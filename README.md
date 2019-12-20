@@ -1,6 +1,6 @@
 # XbeeWebProject
 
-REST API implementation which enables to manage remotely Zigbee Network based on Xbee devices.
+REST API implementation which enables to manage remotely **Zigbee Network** based on [Xbee devices](https://www.digi.com/support/productdetail?pid=3430).
 
 Project uses following technologies and libraries:
 + Spring Framework
@@ -8,8 +8,7 @@ Project uses following technologies and libraries:
 + HSQLDB
 + Xbee Java Library
 
-## How to use:
-Before you launch the app you must:
+## Install
 1. Provide **app.properties** file, where you should specify *com.port*(e.g. **COM3**), *baud.rate* (e.g. **9600**) and also *database.url* (e.g. **jdbc:hsqldb:file:C:/path/to/created/hsql/folder**). Example: 
 ```
 com.port=COM3
@@ -18,10 +17,13 @@ database.url=jdbc:hsqldb:file:C:/projects/db/hsql
 ```
 
 2. Specify path to **app.properties** in \apache-tomcat\conf\catalina.properties (just add line in the end -prop.location=**C:/your/path/to/app.properties**)
-3. Download **rttxSerial.dll** for you system (if you use 64bit Windows download rttxSerial 64bit file respectively) - http://jlog.org/rxtx-win.html
+3. Download **rttxSerial.dll** for you system (if you use 64bit Windows [**download**](http://jlog.org/rxtx-win.html) rttxSerial 64bit file respectively)
 4. Create setenv.bat file in **apache-tomcat-9.0.4\bin** directory and add the line in the file - **set CATALINA_OPTS="-Djava.library.path="C:\path\to\your\rttx\""**
 
-Then you should create .war file from this project, you can do this either through Tomcat settings using IDEA or using cmd 
+Also, in order to provide **log file** you should define [**user environment variable**](https://helpdeskgeek.com/how-to/create-custom-environment-variables-in-windows/) named **XBEE_ROOT** where you specify your project directory or any other.
+
+## Run the app
+You should create .war file from this project, you can do this either through Tomcat settings using IDEA or using cmd 
 > cd /to/your/folder/location 
 
 > jar -cvf my_web_app.war * 
@@ -39,7 +41,7 @@ or just launch it in your IDEA
 ## REST API
 To reach your remote web application you should use url type of http://your-server-ip:8080/XbeeWebProject/io/ ... 
 
-where **XbeeWebProject** is just a name of your deployed .war file
+where **XbeeWebProject** is just a name of your deployed .war file and **8080** is default tomcat http port [(you can change it)](https://stackoverflow.com/questions/18415578/how-to-change-tomcat-port-number) 
 You can manage your ZigBee Network using following queries
 
 ### Discovering new devices in network
@@ -83,7 +85,7 @@ Warning - pin should be set up as digital, not analog
 + param **newId** - new name of remote device which you want to set up
 
 ### Getting parameter
-Enables to get any AT parameter from remote device. Full list of AT parameters is represented in device manual.
+Enables to get any AT parameter from remote device. Full list of AT parameters is represented in [device manual](https://www.digi.com/resources/documentation/digidocs/PDFs/90000976.pdf).
 
 ``` curl -s GET "http://localhost:8080/XbeeWebProject/io/param?adr64bit=0013A20040EC3B01&at=NI" ```
 + param **adr64bit** - unique 64 bit address of remote Xbee device
