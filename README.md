@@ -41,7 +41,7 @@ or just launch it in your IDEA
 ## REST API
 To reach your remote web application you should use url type of http://your-server-ip:8080/XbeeWebProject/io/ ... 
 
-where **XbeeWebProject** is just a name of your deployed .war file and **8080** is default tomcat http port [you can change it](https://stackoverflow.com/questions/18415578/how-to-change-tomcat-port-number) 
+where **XbeeWebProject** is just a name of your deployed .war file and **8080** is default tomcat http port [(you can change it)](https://stackoverflow.com/questions/18415578/how-to-change-tomcat-port-number) 
 You can manage your ZigBee Network using following queries
 
 ### Discovering new devices in network
