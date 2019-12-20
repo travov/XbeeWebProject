@@ -9,7 +9,6 @@ Project uses following technologies and libraries:
 + Xbee Java Library
 
 ## Install
-Before you launch the app you must:
 1. Provide **app.properties** file, where you should specify *com.port*(e.g. **COM3**), *baud.rate* (e.g. **9600**) and also *database.url* (e.g. **jdbc:hsqldb:file:C:/path/to/created/hsql/folder**). Example: 
 ```
 com.port=COM3
