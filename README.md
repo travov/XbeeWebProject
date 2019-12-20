@@ -18,8 +18,10 @@ database.url=jdbc:hsqldb:file:C:/projects/db/hsql
 ```
 
 2. Specify path to **app.properties** in \apache-tomcat\conf\catalina.properties (just add line in the end -prop.location=**C:/your/path/to/app.properties**)
-3. Download **rttxSerial.dll** for you system (if you use 64bit Windows download rttxSerial 64bit file respectively) - http://jlog.org/rxtx-win.html
+3. Download **rttxSerial.dll** for you system (if you use 64bit Windows [**download**](http://jlog.org/rxtx-win.html) rttxSerial 64bit file respectively)
 4. Create setenv.bat file in **apache-tomcat-9.0.4\bin** directory and add the line in the file - **set CATALINA_OPTS="-Djava.library.path="C:\path\to\your\rttx\""**
+
+Also, in order to provide **log file** you should define [**user environment variable**](https://helpdeskgeek.com/how-to/create-custom-environment-variables-in-windows/) named **XBEE_ROOT** where you specify your project directory or any other.
 
 Then you should create .war file from this project, you can do this either through Tomcat settings using IDEA or using cmd 
 > cd /to/your/folder/location 
