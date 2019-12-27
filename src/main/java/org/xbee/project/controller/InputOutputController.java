@@ -152,4 +152,9 @@ public class InputOutputController {
         device.setParameter(param, bytes);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("setParameter"));
     }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseObject> checkIfReachable() {
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("checkIfReachable"));
+    }
 }
