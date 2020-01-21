@@ -29,7 +29,7 @@ public class MyDiscoveryListener implements IDiscoveryListener {
     }
 
     @Override
-    public void discoveryError(String error) { //add throwing exception
+    public void discoveryError(String error) {
         log.info(">> There was an error discovering devices: " + error);
         log.error(error);
     }

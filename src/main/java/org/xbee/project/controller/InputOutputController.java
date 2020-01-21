@@ -7,10 +7,10 @@ import com.digi.xbee.api.exceptions.XBeeException;
 import com.digi.xbee.api.io.IOLine;
 import com.digi.xbee.api.listeners.IDiscoveryListener;
 import com.digi.xbee.api.listeners.IIOSampleReceiveListener;
-import com.digi.xbee.api.utils.HexUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,16 +18,19 @@ import org.xbee.project.listener.MyDiscoveryListener;
 import org.xbee.project.listener.MyIIOSampleReceiveListener;
 import org.xbee.project.model.IOLineState;
 import org.xbee.project.model.MyRemoteXbeeDevice;
+import org.xbee.project.util.HexUtils;
 import org.xbee.project.util.ResponseObject;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(InputOutputController.REST_URL)
 public class InputOutputController {
 
     static final String REST_URL = "/io";
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private XBeeNetwork network;
 
@@ -47,114 +50,137 @@ public class InputOutputController {
             this.receiveListener = (MyIIOSampleReceiveListener) receiveListener;
             network.addDiscoveryListener(discoveryListener);
             device.addIOSampleListener(receiveListener);
-
         } catch (XBeeException e) {
             e.printStackTrace();
         }
     }
 
-    @GetMapping(value = "/discover", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseObject> startDiscoveryProcess(@RequestParam("timeout") Integer timeout) throws XBeeException {
-        //clear list if not null
+    @PostMapping(value = "/discovery", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity startDiscoveryProcess(@RequestParam("timeout") Integer timeout) throws XBeeException {
+        log.info("discovery process with timeout={}", timeout);
         if (!discoveryListener.devices.isEmpty()) {
             discoveryListener.devices.clear();
         }
         network.setDiscoveryTimeout(timeout);
         network.startDiscoveryProcess();
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("startDiscoveryProcess"));
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/states", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<IOLineState>> getStates(@RequestParam("deviceId")  Integer deviceId,
-                                       @RequestParam(value = "at",required = false) String atCommand,
+    public List<IOLineState> getStates(@RequestParam("deviceId")  Integer deviceId,
+                                       @RequestParam(value = "line", required = false) String line,
                                        @RequestParam(value = "startDateTime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDateTime,
                                        @RequestParam(value = "endDateTime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDateTime){
+        log.info("states from id={} from line {}", deviceId, line);
         List<IOLineState> states;
-        if (deviceId != null && atCommand == null && startDateTime == null && endDateTime == null){
+        if (deviceId != null && line == null && startDateTime == null && endDateTime == null){
           states = receiveListener.getByDeviceId(deviceId);
         }
-        else states = receiveListener .getByDeviceIdAndTime(deviceId, atCommand, startDateTime, endDateTime);
-        return ResponseEntity.status(HttpStatus.OK).body(states);
+        else states = receiveListener.getByDeviceIdAndTime(deviceId, line, startDateTime, endDateTime);
+        return states;
     }
 
     @GetMapping(value = "/devices", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MyRemoteXbeeDevice>> getDiscoveredDevices(@RequestParam(value = "active", required = false) Boolean active){
+    public List<MyRemoteXbeeDevice> getDiscoveredDevices(@RequestParam(value = "active", required = false) Boolean active){
+        log.info("devices");
         List<MyRemoteXbeeDevice> devices;
         if (active == null)
             devices = discoveryListener.getAllDevices();
         else
             devices = discoveryListener.getActiveDevices(active);
-        return ResponseEntity.status(HttpStatus.OK).body(devices);
+        return devices;
     }
 
     @PutMapping(value = "/sampling", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseObject> setSampling(@RequestParam("adr64bit") String XBee64BitAddress,
-                              @RequestParam("rate") String rate) throws XBeeException {
-        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress);
+    public ResponseEntity setSampling(@RequestParam("mac") String mac,
+                                      @RequestParam("rate") String rate) throws XBeeException {
+        log.info("sampling rate {} with mac={}", rate, mac);
+        RemoteXBeeDevice device = discoveryListener.getDevice(mac);
         device.setIOSamplingRate(Integer.parseInt(rate));
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("setSampling"));
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping(value = "/changeDetection", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseObject> setChangeDetection(@RequestParam("adr64bit") String XBee64BitAddress,
-                                   @RequestBody Set<Integer> lines) throws XBeeException {
+    public ResponseEntity setChangeDetection(@RequestParam("mac") String mac,
+                                             @RequestBody Set<Integer> lines) throws XBeeException {
+        log.info("set change detection to lines {} with mac={}", lines, mac);
         Set<IOLine> set = new HashSet<>();
         lines.forEach(line -> set.add(IOLine.getDIO(line)));
-        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress);
+        RemoteXBeeDevice device = discoveryListener.getDevice(mac);
         device.setDIOChangeDetection(set);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("setChangeDetection"));
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/changeDetection", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseObject<String, Set> getChangeDetection(@RequestParam("mac") String mac) throws XBeeException {
+        log.info("get change detection from mac={}", mac);
+        RemoteXBeeDevice device = discoveryListener.getDevice(mac);
+        Set<IOLine> cd = device.getDIOChangeDetection();
+        Set<Integer> changeDetectionLines;
+        if (cd != null)
+            changeDetectionLines = cd.stream().map(IOLine::getIndex).collect(Collectors.toSet());
+        else
+            changeDetectionLines = new HashSet<>();
+        return new ResponseObject<>(mac,  new HashMap<String, Set>(){{
+            put("IC", changeDetectionLines);
+        }});
     }
 
     @PutMapping(value = "/wr", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseObject> write(@RequestParam("adr64bit") String XBee64BitAddress) throws XBeeException {
-        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress);
+    public ResponseEntity write(@RequestParam("mac") String mac) throws XBeeException {
+        log.info("write to mac={}", mac);
+        RemoteXBeeDevice device = discoveryListener.getDevice(mac);
         device.writeChanges();
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("write"));
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/dio", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseObject> getDioValue(@RequestParam("adr64bit") String XBee64BitAddress,
-                                           @RequestParam("index") int index) throws XBeeException {
-        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress);
+    public ResponseObject<String, String> getDioValue(@RequestParam("mac") String mac,
+                                                      @RequestParam("index") int index) throws XBeeException {
+        log.info("get dio from mac={} with index={}", mac, index);
+        RemoteXBeeDevice device = discoveryListener.getDevice(mac);
         IOLine line = IOLine.getDIO(index);
         String value = device.getDIOValue(line).getName();
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(XBee64BitAddress, "getDioValue", new HashMap<String, String>(){{
+        return new ResponseObject<>(mac, new HashMap<String, String>(){{
             put(line.getConfigurationATCommand(), value);
-        }}));
+        }});
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseObject> setNodeIdentifier(@RequestParam("adr64bit") String XBee64BitAddress,
-                                    @RequestParam("newId") String id) throws XBeeException {
-        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress);
-        device.setNodeID(id);
+    public ResponseEntity setNodeIdentifier(@RequestParam("mac") String mac,
+                                            @RequestParam("newId") String nodeId) throws XBeeException {
+        log.info("set node identifier {} to mac={}", nodeId, mac);
+        RemoteXBeeDevice device = discoveryListener.getDevice(mac);
+        device.setNodeID(nodeId);
         discoveryListener.updateDevice(device);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("setNodeIdentifier"));
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/param", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseObject> getParameter(@RequestParam("adr64bit") String XBee64BitAddress,
-                                            @RequestParam("at") String param) throws XBeeException {
-
-        byte[] parameter = discoveryListener.getDevice(XBee64BitAddress).getParameter(param);
-        String value = param.equals("NI") ? new String(parameter, StandardCharsets.UTF_8) : HexUtils.byteArrayToHexString(parameter);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(XBee64BitAddress, "getParameter", new HashMap<String, String>(){{
+    public ResponseObject<String, String> getParameter(@RequestParam("mac") String mac,
+                                                       @RequestParam("at") String param) throws XBeeException {
+        log.info("get parameter {} from mac={}", param, mac);
+        byte[] parameter = discoveryListener.getDevice(mac).getParameter(param);
+        String value = HexUtils.byteArrayToHexString(parameter, param);
+        return new ResponseObject<>(mac, new HashMap<String, String>(){{
             put(param, value);
-        }}));
+        }});
     }
 
     @PutMapping(value = "/param", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseObject> setParameter(@RequestParam("adr64bit") String XBee64BitAddress,
-                                            @RequestParam("at") String param,
-                                            @RequestParam("value") String value) throws XBeeException {
-        byte[] bytes = param.equals("NI") ? value.getBytes() : HexUtils.hexStringToByteArray(value);
-        RemoteXBeeDevice device = discoveryListener.getDevice(XBee64BitAddress);
+    public ResponseEntity setParameter(@RequestParam("mac") String mac,
+                                       @RequestParam("at") String param,
+                                       @RequestParam("value") String value) throws XBeeException {
+        log.info("set parameter {} with value={} to mac {}", param, value, mac);
+        byte[] bytes = HexUtils.hexStringToByteArray(value, param);
+        RemoteXBeeDevice device = discoveryListener.getDevice(mac);
         device.setParameter(param, bytes);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("setParameter"));
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseObject> checkIfReachable() {
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("checkIfReachable"));
+    @GetMapping(value = "/reach", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity checkIfReachable() {
+        log.info("check if server is reachable");
+        return ResponseEntity.ok().build();
     }
 }
