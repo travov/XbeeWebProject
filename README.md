@@ -28,9 +28,9 @@ You should create .war file from this project, you can do this either through To
 
 > mvn package 
 
-and place this .war file in **apache-tomcat-9.0.4\webapps** directory
+and place this .war file in **apache-tomcat-9.0.4/webapps** directory
 
-To launch the app you should go to the **apache-tomcat\bin** directory
+To launch the app you should go to the **apache-tomcat/bin** directory
 > cd C:/ ../apache-tomcat-9.0.4/bin
 
 and start tomcat
