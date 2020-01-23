@@ -79,6 +79,7 @@ You can manage your ZigBee Network using following queries
 
 ### Getting digital value
 Warning - pin should be set up as digital, not analog
+
 ``` curl -s GET "http://localhost:8080/XbeeWebProject/io/dio?mac=0013A20040EC3B01&index=0" ```
 + param **mac** - unique 64 bit address of remote Xbee device
 + param **index** - index of a line (pin), in this example it is 0 (D0)
