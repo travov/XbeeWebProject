@@ -60,42 +60,46 @@ You can manage your ZigBee Network using following queries
 + param **active** - you can specify which devices you want to get (active or not active) by setting it true or false
 
 ### Setting sampling rate
-``` curl -s -X PUT "http://localhost:8080/XbeeWebProject/io/sampling?adr64bit=0013A20040EC3B01&rate=2000" ```
+``` curl -s -X PUT "http://localhost:8080/XbeeWebProject/io/sampling?mac=0013A20040EC3B01&rate=2000" ```
 + param **rate** - time rate in ms, denotes interval between receiving changed state of pins
-+ param **adr64bit** - unique 64 bit address of remote Xbee device
++ param **mac** - unique 64 bit address of remote Xbee device
+
+### Getting change detection
+``` curl -s GET "http://localhost:8080/XbeeWebProject/io/changeDetection?mac=0013A20040EC3B01" ```
++ param **mac** - unique 64 bit address of remote Xbee device
 
 ### Setting change detection
-``` curl -s -X PUT -d '[0]' -H 'Content-Type: application/json' http://localhost:8080/XbeeWebProject/io/changeDetection?adr64bit=0013A20040EC3B01 ```
+``` curl -s -X PUT -d '[0]' -H 'Content-Type: application/json' http://localhost:8080/XbeeWebProject/io/changeDetection?mac=0013A20040EC3B01 ```
 + **Request Body** - set of lines (pins) that are should (or in case if body is empty should not) transmit the state of each specified pin when it is changed. In this example it is **[0]**, that is D0 pin is set up to transmit message when state was changed
-+ param **adr64bit** - unique 64 bit address of remote Xbee device
++ param **mac** - unique 64 bit address of remote Xbee device
 
 ### Writing all changes
-``` curl -s -X PUT http://localhost:8080/XbeeWebProject/io/wr?adr64bit=0013A20040EC3B01 ```
-+ param **adr64bit** - unique 64 bit address of remote Xbee device
+``` curl -s -X PUT http://localhost:8080/XbeeWebProject/io/wr?mac=0013A20040EC3B01 ```
++ param **mac** - unique 64 bit address of remote Xbee device
 
 ### Getting digital value
 Warning - pin should be set up as digital, not analog
-``` curl -s GET "http://localhost:8080/XbeeWebProject/io/dio?adr64bit=0013A20040EC3B01&index=0" ```
-+ param **adr64bit** - unique 64 bit address of remote Xbee device
+``` curl -s GET "http://localhost:8080/XbeeWebProject/io/dio?mac=0013A20040EC3B01&index=0" ```
++ param **mac** - unique 64 bit address of remote Xbee device
 + param **index** - index of a line (pin), in this example it is 0 (D0)
 
 ### Setting new identifier (name)
-``` curl -s -X PUT "http://localhost:8080/XbeeWebProject/io?adr64bit=0013A20040EC3B01&newId=NewName" ```
-+ param **adr64bit** - unique 64 bit address of remote Xbee device
+``` curl -s -X PUT "http://localhost:8080/XbeeWebProject/io?mac=0013A20040EC3B01&newId=NewName" ```
++ param **mac** - unique 64 bit address of remote Xbee device
 + param **newId** - new name of remote device which you want to set up
 
 ### Getting parameter
 Enables to get any AT parameter from remote device. Full list of AT parameters is represented in [device manual](https://www.digi.com/resources/documentation/digidocs/PDFs/90000976.pdf).
 
-``` curl -s GET "http://localhost:8080/XbeeWebProject/io/param?adr64bit=0013A20040EC3B01&at=NI" ```
-+ param **adr64bit** - unique 64 bit address of remote Xbee device
+``` curl -s GET "http://localhost:8080/XbeeWebProject/io/param?mac=0013A20040EC3B01&at=NI" ```
++ param **mac** - unique 64 bit address of remote Xbee device
 + param **at** - any AT parameter from device manual list. In this example it is NI - node identifier
 
 ### Setting parameter
 Enables to set up any AT parameter to remote device
 
-``` curl -s -X PUT "http://localhost:8080/XbeeWebProject/io/param?adr64bit=0013A20040EC3B01&at=NI&value=NewIdentifier" ```
-+ param **adr64bit** - unique 64 bit address of remote Xbee device
+``` curl -s -X PUT "http://localhost:8080/XbeeWebProject/io/param?mac=0013A20040EC3B01&at=NI&value=NewIdentifier" ```
++ param **mac** - unique 64 bit address of remote Xbee device
 + param **at** - any AT parameter from device manual list. In this example it is NI - node identifier
 + param **value** - value you want to set up to this parameter
 
