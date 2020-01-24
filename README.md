@@ -8,6 +8,8 @@ Project uses following technologies and libraries:
 + HSQLDB
 + Xbee Java Library
 
+![Image alt](https://github.com/travov/XbeeWebProject/blob/master/git_xbee_plan.jpg)
+
 ## Install
 1. Provide **app.properties** file, where you should specify *com.port*(e.g. **COM3**), *baud.rate* (e.g. **9600**) and also *database.url* (e.g. **jdbc:hsqldb:file:C:/path/to/created/hsql/folder**). Example: 
 ```
