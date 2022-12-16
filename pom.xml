@@ -38,7 +38,7 @@
     </build>
 
     <properties>
-        <spring-version>5.0.4.RELEASE</spring-version>
+        <spring-version>5.2.20.RELEASE</spring-version>
         <jackson-json.version>2.10.1</jackson-json.version>
         <hibernate-version>5.2.11.Final</hibernate-version>
         <spring-data-jpa.version>2.0.5.RELEASE</spring-data-jpa.version>
